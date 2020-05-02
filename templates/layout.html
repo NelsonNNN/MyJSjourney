@@ -2,24 +2,32 @@
 <html>
 <head>
     <link rel='stylesheet' type='text/css' href={{url_for('static', filename='css/style.css')}}>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>JavaStart</title>
 </head>
 <body>
     <header>
-        <h1>This is the start of learning Java</h1>
+        <h1>This is the start of learning JavaScript</h1>
+        <input class='search' type='text'>
     </header>
     <form>
         <fieldset>
             <div class='msg'></div>
             <label>Add User</label>
-            <input type='text' class='inputs1'>
+            <input type='text' class='username'>
             <label>Password</label>
-            <input type='password' class='inputs2'>
+            <input type='password' class='password'>
         </fieldset>
         <input type='submit' class='submits'>
     </form>
-    <ul class='users'></ul>
-    
+    <select class='options'>
+        <option value='all'>All</option>
+        <option value='completed'>Completed</option>
+        <option value='incomplete'>Incomplete</option>
+    </select>
+    <div class='parent-list'>
+        <ul class='users'></ul> 
+    </div>   
     <script src='{{url_for('static', filename='/main.js')}}'></script>
 </body>
 </html>
