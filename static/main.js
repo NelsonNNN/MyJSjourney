@@ -1,30 +1,36 @@
+//get elements from html and assign them variables
 const divForm = document.querySelector('form');
 const userList = document.querySelector('.users');
 const userName = document.querySelector('.username')
 const passWord = document.querySelector('.password')
 const search = document.querySelector('.search')
-const message=document.querySelector('.msg');
 const filterOpt = document.querySelector('.options')
 
-
+//add eventlisteners to the elements
 divForm.addEventListener('submit', funcSubmit)
 userList.addEventListener('click', complTrash)
 search.addEventListener('keyup', searchItems)
 filterOpt.addEventListener('click', filterItems)
+document.addEventListener('DOMContentLoaded', getItem)
 
+//create event function to create a list baased on user input
 function funcSubmit(e){
     e.preventDefault();
     if(userName.value==='' || passWord.value===''){
-       message.classList.add('msg')
+       const message=document.createElement('div');
+       message.className='msg'
        message.innerHTML='<p>Please input the values</p>' 
+       divForm.insertBefore(message, divForm.childNodes[0])
        setTimeout(()=>
-           message.remove(), 3000
+           message.remove(), 2000
        );
     }
     else{
         const lists = document.createElement('li');
         lists.className='lists';
-        lists.appendChild(document.createTextNode(`${userName.value}:${passWord.value}`));
+        const details = document.createTextNode(`${userName.value}:${passWord.value}`);
+        lists.appendChild(details);
+        fromLocalStorage(`${userName.value}:${passWord.value}`)
         const trash = document.createElement('button')
         trash.className='trash';
         trash.appendChild(document.createTextNode('X'));
@@ -39,11 +45,14 @@ function funcSubmit(e){
     }
 }
 
+//delete from list and check an item in list
 function complTrash(e){
     if(e.target.classList.contains('trash')){
         if(confirm('Are you sure?')){
             const del = e.target.parentElement;
             userList.removeChild(del)
+            removelocal(del)
+            
         }
     }
     if(e.target.classList.contains('checked')){
@@ -52,6 +61,7 @@ function complTrash(e){
     }
 }
 
+//search for item in list
 function searchItems(e){
     var text = e.target.value.toLowerCase();
     var items = userList.getElementsByTagName('li');
@@ -65,9 +75,10 @@ function searchItems(e){
     });
 }
 
+//filter checked items from list and vise versa
 function filterItems(e){
-    const todo = userList.childNodes;
-    todo.forEach(function(list){
+    const selection = userList.childNodes;
+    selection.forEach(function(list){
     switch(e.target.value){
         case ('all'):
             list.style.display='flex';
@@ -90,4 +101,55 @@ function filterItems(e){
             break;
     }
     })
+}
+
+//store and retrieve items in local storage
+function fromLocalStorage(local){
+    let locals;
+    if(localStorage.getItem('locals') === null){
+        locals=[]
+    }
+    else{
+        locals = JSON.parse(localStorage.getItem('locals'))
+    }
+    locals.push(local)
+    localStorage.setItem('locals', JSON.stringify(locals))
+}
+function getItem(){
+    let locals;
+    if(localStorage.getItem('locals') === null){
+        locals=[]
+    }
+    else{
+        locals = JSON.parse(localStorage.getItem('locals'))
+    }
+    locals.forEach(function(local){
+        const lists = document.createElement('li');
+        lists.className='lists';
+        const details = document.createTextNode(local);
+        lists.appendChild(details);
+        const trash = document.createElement('button')
+        trash.className='trash';
+        trash.appendChild(document.createTextNode('X'));
+        const complete= document.createElement('button');
+        complete.className='checked'
+        complete.appendChild(document.createTextNode('_/'));
+        lists.appendChild(trash);
+        lists.appendChild(complete)
+        userList.appendChild(lists);
+    });
+}
+
+//remove items from local storage
+function removelocal(local){
+    let locals;
+    if(localStorage.getItem('locals') === null){
+        locals=[]
+    }
+    else{
+        locals = JSON.parse(localStorage.getItem('locals'))
+    }
+    const nodeList =local.childNodes[0].nodeValue;
+    locals.splice(locals.indexOf(nodeList), 1)
+    localStorage.setItem('locals', JSON.stringify(locals))
 }
